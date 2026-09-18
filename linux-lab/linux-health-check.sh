@@ -40,3 +40,12 @@ free -h
 
 echo "IP Address:"
 ip addr
+
+
+echo "Kernel:"
+uname -r
+
+
+echo "CPU Cores:"
+nproc
+
