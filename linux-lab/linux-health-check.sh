@@ -1,5 +1,16 @@
 #!/bin/bash
 
+VERBOSE=false
+
+if [ "$1" = "--verbose" ]; then
+    VERBOSE=true
+fi
+
+if [ "$VERBOSE" = true ]; then
+    echo "Verbose mode enabled"
+fi
+
+
 echo "===== Linux Health Check ====="
 echo
 
@@ -18,6 +29,17 @@ echo "CPU Cores    : $CPU_CORES"
 echo "IP Address   : $IP_ADDRESS"
 echo "Uptime       : $(uptime -p)"
 echo
+
+if [ "$VERBOSE" = true ]; then
+    VERBOSE_MEM_USAGE=$(free | awk '/Mem:/ {printf "%.0f", $3/$2 * 100}')
+
+    echo "===== Verbose Information ====="
+    echo "Load Average : $(awk '{print $1, $2, $3}' /proc/loadavg)"
+    echo "Root Disk    : $(df -h / | awk 'NR==2 {print $5}')"
+    echo "Memory       : ${VERBOSE_MEM_USAGE}%"
+    echo
+fi
+
 
 
 # --------------------------------------------------
