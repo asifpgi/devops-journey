@@ -1,34 +1,42 @@
 #!/bin/bash
 
 VERBOSE=false
+DISK_ONLY=false
+CPU_ONLY=false
+MEMORY_ONLY=false
 
-if [ "$1" = "--verbose" ]; then
-    VERBOSE=true
-fi
+for arg in "$@"; do
+    case "$arg" in
+        --verbose)
+            VERBOSE=true
+            ;;
+        --help)
+            echo "Usage: $0 [--verbose] [--help] [--disk-only] [--cpu-only] [--memory-only]"
+            exit 0
+            ;;
+        --disk-only)
+            DISK_ONLY=true
+            ;;
+        --cpu-only)
+            CPU_ONLY=true
+            ;;
+        --memory-only)
+            MEMORY_ONLY=true
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            echo "Usage: $0 [--verbose] [--help] [--disk-only]"
+            exit 1
+            ;;
+    esac
+done
 
 if [ "$VERBOSE" = true ]; then
     echo "Verbose mode enabled"
 fi
 
 
-echo "===== Linux Health Check ====="
-echo
 
-# --------------------------------------------------
-# Collect basic system information
-# --------------------------------------------------
-HOSTNAME=$(hostname)
-KERNEL=$(uname -r)
-CPU_CORES=$(nproc)
-IP_ADDRESS=$(hostname -I | awk '{print $1}')
-
-echo "Hostname     : $HOSTNAME"
-echo "OS           : $(grep PRETTY_NAME /etc/os-release | cut -d= -f2- | tr -d '"')"
-echo "Kernel       : $KERNEL"
-echo "CPU Cores    : $CPU_CORES"
-echo "IP Address   : $IP_ADDRESS"
-echo "Uptime       : $(uptime -p)"
-echo
 
 if [ "$VERBOSE" = true ]; then
     VERBOSE_MEM_USAGE=$(free | awk '/Mem:/ {printf "%.0f", $3/$2 * 100}')
@@ -89,6 +97,41 @@ check_memory() {
         return 0
     fi
 }
+
+
+if [ "$DISK_ONLY" = true ]; then
+    check_disk
+    exit $?
+fi
+
+if [ "$CPU_ONLY" = true ]; then
+    check_cpu
+    exit $?
+fi
+
+if [ "$MEMORY_ONLY" = true ]; then
+    check_memory
+    exit $?
+fi
+
+echo "===== Linux Health Check ====="
+echo
+
+# --------------------------------------------------
+# Collect basic system information
+# --------------------------------------------------
+HOSTNAME=$(hostname)
+KERNEL=$(uname -r)
+CPU_CORES=$(nproc)
+IP_ADDRESS=$(hostname -I | awk '{print $1}')
+
+echo "Hostname     : $HOSTNAME"
+echo "OS           : $(grep PRETTY_NAME /etc/os-release | cut -d= -f2- | tr -d '"')"
+echo "Kernel       : $KERNEL"
+echo "CPU Cores    : $CPU_CORES"
+echo "IP Address   : $IP_ADDRESS"
+echo "Uptime       : $(uptime -p)"
+echo
 
 
 # --------------------------------------------------
