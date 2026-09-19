@@ -1,41 +1,57 @@
 #!/bin/bash
 
 VERBOSE=false
-DISK_ONLY=false
-CPU_ONLY=false
-MEMORY_ONLY=false
+MODE="all"
 
 for arg in "$@"; do
     case "$arg" in
         --verbose)
             VERBOSE=true
             ;;
+        --cpu-only)
+            if [ "$MODE" != "all" ]; then
+                echo "Error: only one health-check mode can be selected."
+                exit 1
+            fi
+            MODE="cpu"
+            ;;
+
+
+         --disk-only)
+           if [ "$MODE" != "all" ]; then
+               echo "Error: only one health-check mode can be selected."
+               exit 1
+           fi
+           MODE="disk"
+           ;;
+
+
+        --memory-only)
+          if [ "$MODE" != "all" ]; then
+              echo "Error: only one health-check mode can be selected."
+              exit 1
+          fi
+          MODE="memory"
+          ;;
+
+
         --help)
-            echo "Usage: $0 [--verbose] [--help] [--disk-only] [--cpu-only] [--memory-only]"
+            echo "Usage: $0 [--verbose] [--cpu-only|--disk-only|--memory-only|--help]"
             exit 0
             ;;
-        --disk-only)
-            DISK_ONLY=true
-            ;;
-        --cpu-only)
-            CPU_ONLY=true
-            ;;
-        --memory-only)
-            MEMORY_ONLY=true
-            ;;
+
         *)
             echo "Unknown option: $arg"
-            echo "Usage: $0 [--verbose] [--help] [--disk-only]"
+            echo "Usage: $0 [--verbose] [--cpu-only|--disk-only|--memory-only|--help]"
             exit 1
             ;;
     esac
 done
 
+
 if [ "$VERBOSE" = true ]; then
     echo "Verbose mode enabled"
 fi
-
-
 
 
 if [ "$VERBOSE" = true ]; then
@@ -99,20 +115,23 @@ check_memory() {
 }
 
 
-if [ "$DISK_ONLY" = true ]; then
-    check_disk
-    exit $?
-fi
+case "$MODE" in
+    cpu)
+        check_cpu
+        exit $?
+        ;;
 
-if [ "$CPU_ONLY" = true ]; then
-    check_cpu
-    exit $?
-fi
+    disk)
+        check_disk
+        exit $?
+        ;;
 
-if [ "$MEMORY_ONLY" = true ]; then
-    check_memory
-    exit $?
-fi
+    memory)
+        check_memory
+        exit $?
+        ;;
+esac
+
 
 echo "===== Linux Health Check ====="
 echo
