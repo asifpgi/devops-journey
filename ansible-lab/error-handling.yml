@@ -1,0 +1,24 @@
+---
+- name: Demonstrate Ansible error handling
+  hosts: web
+  gather_facts: false
+
+  tasks:
+    - name: Run protected tasks
+      block:
+        - name: Simulate successful task
+          ansible.builtin.debug:
+            msg: "Starting maintenance on {{ inventory_hostname }}"
+
+        - name: Simulate failure
+          ansible.builtin.command: /bin/false
+
+      rescue:
+        - name: Handle the failure
+          ansible.builtin.debug:
+            msg: "Maintenance failed on {{ inventory_hostname }}"
+
+      always:
+        - name: Always run cleanup message
+          ansible.builtin.debug:
+            msg: "Maintenance workflow completed for {{ inventory_hostname }}"

@@ -1,0 +1,14 @@
+---
+- name: Rolling update example
+  hosts: production
+  gather_facts: false
+  serial: 1
+
+  tasks:
+    - name: Show current host
+      ansible.builtin.debug:
+        msg: "Updating {{ inventory_hostname }}"
+
+    - name: Simulate maintenance task
+      ansible.builtin.command: hostname
+      changed_when: false

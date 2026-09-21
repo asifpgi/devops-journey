@@ -1,0 +1,8 @@
+---
+- name: Configure production web servers
+  hosts: web
+  become: true
+  gather_facts: true
+
+  roles:
+    - webserver
