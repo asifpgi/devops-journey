@@ -1,0 +1,7 @@
+[Unit]
+Description=Linux Health Check
+
+[Service]
+Type=oneshot
+User=asifadmin
+ExecStart=/home/asifadmin/devops-journey/linux-lab/linux-health-check.sh
