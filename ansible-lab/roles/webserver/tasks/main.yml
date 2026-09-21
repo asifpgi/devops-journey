@@ -1,0 +1,19 @@
+---
+- name: Ensure Nginx is installed
+  ansible.builtin.apt:
+    name: "{{ web_package }}"
+    state: present
+    update_cache: true
+
+- name: Ensure Nginx is running
+  ansible.builtin.service:
+    name: "{{ web_service }}"
+    state: started
+    enabled: true
+
+- name: Deploy web page
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: "{{ web_root }}/index.html"
+    mode: '0644'
+  notify: Restart Nginx

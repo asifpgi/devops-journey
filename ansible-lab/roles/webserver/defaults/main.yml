@@ -1,0 +1,6 @@
+---
+web_package: nginx
+web_service: nginx
+web_root: /var/www/html
+page_title: DevOps Journey
+page_heading: Welcome to Asif's Ansible Lab
