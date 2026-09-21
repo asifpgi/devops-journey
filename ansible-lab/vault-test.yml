@@ -1,0 +1,12 @@
+---
+- name: Test Ansible Vault
+  hosts: local
+  gather_facts: false
+
+  tasks:
+    - name: Verify vault variable is available
+      ansible.builtin.assert:
+        that:
+          - secret_message is defined
+        success_msg: "Vault variable loaded successfully"
+        fail_msg: "Vault variable was not loaded"

@@ -1,0 +1,12 @@
+---
+- name: Use protected Ansible Vault variable
+  hosts: local
+  gather_facts: false
+
+  tasks:
+    - name: Create protected file using vault secret
+      ansible.builtin.copy:
+        content: "{{ secret_message }}"
+        dest: /tmp/ansible-vault-secret.txt
+        mode: '0600'
+      no_log: true
