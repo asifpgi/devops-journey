@@ -1,0 +1,25 @@
+---
+- name: Manage Linux system
+  hosts: local
+  become: true
+
+  tasks:
+    - name: Ensure tree package is installed
+      ansible.builtin.apt:
+        name: tree
+        state: present
+        update_cache: true
+
+    - name: Create DevOps test directory
+      ansible.builtin.file:
+        path: /tmp/ansible-devops-lab
+        state: directory
+        mode: '0755'
+
+    - name: Create test file
+      ansible.builtin.copy:
+        dest: /tmp/ansible-devops-lab/info.txt
+        content: |
+          Managed by Ansible
+          DevOps Journey
+        mode: '0644'
