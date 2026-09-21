@@ -1,5 +1,6 @@
 #!/bin/bash
 
+LOG_FILE="$(dirname "$0")/logs/health-check.log"
 
 timestamp() {
     date '+%Y-%m-%d %H:%M:%S'
@@ -9,7 +10,7 @@ log() {
     local LEVEL="$1"
     local MESSAGE="$2"
 
-    echo "$(timestamp) [$LEVEL] $MESSAGE"
+    echo "$(timestamp) [$LEVEL] $MESSAGE" | tee -a "$LOG_FILE"
 }
 
 

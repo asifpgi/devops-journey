@@ -1,0 +1,5 @@
+2026-09-21 13:54:35 [INFO] Health check started
+2026-09-21 13:54:36 [OK] CPU load 0.08 on 12 cores
+2026-09-21 13:54:36 [OK] Disk usage 1%
+2026-09-21 13:54:36 [OK] Memory usage 7%
+2026-09-21 13:54:36 [INFO] Health check completed
