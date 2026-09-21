@@ -1,5 +1,18 @@
 #!/bin/bash
 
+
+timestamp() {
+    date '+%Y-%m-%d %H:%M:%S'
+}
+
+log() {
+    local LEVEL="$1"
+    local MESSAGE="$2"
+
+    echo "$(timestamp) [$LEVEL] $MESSAGE"
+}
+
+
 VERBOSE=false
 MODE="all"
 
@@ -65,7 +78,6 @@ if [ "$VERBOSE" = true ]; then
 fi
 
 
-
 # --------------------------------------------------
 # CPU Health Check
 # --------------------------------------------------
@@ -74,10 +86,10 @@ check_cpu() {
     CPU_CORES=$(nproc)
 
     if awk "BEGIN {exit !($CPU_LOAD >= $CPU_CORES)}"; then
-        echo "CPU: WARNING - load $CPU_LOAD on $CPU_CORES cores"
+        log WARNING "CPU load $CPU_LOAD on $CPU_CORES cores"
         return 1
     else
-        echo "CPU: OK - load $CPU_LOAD on $CPU_CORES cores"
+        log OK "CPU load $CPU_LOAD on $CPU_CORES cores"
         return 0
     fi
 }
@@ -90,10 +102,10 @@ check_disk() {
     DISK_USAGE=$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')
 
     if [ "$DISK_USAGE" -ge 80 ]; then
-        echo "DISK: WARNING - ${DISK_USAGE}% used"
+        log WARNING "Disk usage ${DISK_USAGE}%"
         return 1
     else
-        echo "DISK: OK - ${DISK_USAGE}% used"
+        log OK "Disk usage ${DISK_USAGE}%"
         return 0
     fi
 }
@@ -106,10 +118,10 @@ check_memory() {
     MEM_USAGE=$(free | awk '/Mem:/ {printf "%.0f", $3/$2 * 100}')
 
     if [ "$MEM_USAGE" -ge 80 ]; then
-        echo "MEMORY: WARNING - ${MEM_USAGE}% used"
+        log WARNING "Memory usage ${MEM_USAGE}%"
         return 1
     else
-        echo "MEMORY: OK - ${MEM_USAGE}% used"
+        log OK "Memory usage ${MEM_USAGE}%"
         return 0
     fi
 }
@@ -135,6 +147,9 @@ esac
 
 echo "===== Linux Health Check ====="
 echo
+
+log INFO "Health check started"
+
 
 # --------------------------------------------------
 # Collect basic system information
@@ -171,11 +186,13 @@ check_memory
 MEMORY_STATUS=$?
 echo
 
+log INFO "Health check completed"
+
 
 # --------------------------------------------------
 # Overall Health Status
 # --------------------------------------------------
-echo "===== Health Check Complete ====="
+
 
 if [ "$CPU_STATUS" -ne 0 ] || [ "$DISK_STATUS" -ne 0 ] || [ "$MEMORY_STATUS" -ne 0 ]; then
     echo "OVERALL STATUS: WARNING"
