@@ -1,0 +1,50 @@
+---
+- name: Production validation
+  hosts: production
+  gather_facts: true
+
+  tasks:
+    - name: Check root filesystem usage
+      ansible.builtin.shell: |
+        df -P / | awk 'NR==2 {gsub("%","",$5); print $5}'
+      register: disk_usage
+      changed_when: false
+
+    - name: Validate disk usage
+      ansible.builtin.assert:
+        that:
+          - disk_usage.stdout | int < 80
+        success_msg: "Disk usage is healthy on {{ inventory_hostname }}"
+        fail_msg: "Disk usage is above 80% on {{ inventory_hostname }}"
+
+    - name: Check available memory
+      ansible.builtin.shell: |
+        free -m | awk '/Mem:/ {print $7}'
+      register: available_memory
+      changed_when: false
+
+    - name: Validate available memory
+      ansible.builtin.assert:
+        that:
+          - available_memory.stdout | int > 500
+        success_msg: "Available memory is healthy on {{ inventory_hostname }}"
+        fail_msg: "Available memory is below 500 MB on {{ inventory_hostname }}"
+
+    - name: Check Nginx only on web servers
+      ansible.builtin.service_facts:
+      when: "'web' in group_names"
+
+    - name: Validate Nginx service
+      ansible.builtin.assert:
+        that:
+          - ansible_facts.services['nginx.service'].state == 'running'
+        success_msg: "Nginx is running on {{ inventory_hostname }}"
+        fail_msg: "Nginx is not running on {{ inventory_hostname }}"
+      when: "'web' in group_names"
+
+    - name: Show validation summary
+      ansible.builtin.debug:
+        msg:
+          - "Host: {{ inventory_hostname }}"
+          - "Disk usage: {{ disk_usage.stdout }}%"
+          - "Available memory: {{ available_memory.stdout }} MB"
