@@ -1,0 +1,32 @@
+---
+- name: Demonstrate Ansible logic
+  hosts: production
+  gather_facts: true
+
+  tasks:
+    - name: Check uptime
+      ansible.builtin.command: uptime
+      register: uptime_result
+      changed_when: false
+
+    - name: Display uptime output
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} uptime: {{ uptime_result.stdout }}"
+
+    - name: Show message only for web servers
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} belongs to the web group"
+      when: "'web' in group_names"
+
+    - name: Show message only for database servers
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} belongs to the db group"
+      when: "'db' in group_names"
+
+    - name: Display useful Linux commands
+      ansible.builtin.debug:
+        msg: "Command: {{ item }}"
+      loop:
+        - uptime
+        - df -h
+        - free -h
