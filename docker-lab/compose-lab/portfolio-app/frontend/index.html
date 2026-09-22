@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Asif DevOps Docker Project</title>
+</head>
+<body>
+    <h1>Asif's Docker DevOps Project</h1>
+    <p>Nginx + Flask + Redis</p>
+
+    <button onclick="loadData()">Call Backend API</button>
+
+    <pre id="result"></pre>
+
+    <script>
+        async function loadData() {
+            const response = await fetch('/api');
+            const data = await response.json();
+
+            document.getElementById('result').textContent =
+                JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>
