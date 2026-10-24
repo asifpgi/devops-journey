@@ -1,7 +1,11 @@
+
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: backend
+  annotations:
+    devops-lab/gitops-test: "first-auto-sync"
 
 spec:
   replicas: 2
@@ -9,8 +13,6 @@ spec:
   selector:
     matchLabels:
       app: backend
-      annotations:
-        devops-lab/gitops-test: "first-auto-sync"
 
   template:
     metadata:
@@ -55,6 +57,7 @@ spec:
 ---
 apiVersion: v1
 kind: Service
+
 metadata:
   name: backend
 
