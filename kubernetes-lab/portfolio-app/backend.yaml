@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       app: backend
+      annotations:
+        devops-lab/gitops-test: "first-auto-sync"
 
   template:
     metadata:
