@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: asif-flask-backend:v1
+          image: ghcr.io/asifpgi/portfolio-backend@sha256:b54570368ef1a48fd06d8220791aa31b9428dc49b78adbab7bbe95d4ed59facf
           imagePullPolicy: IfNotPresent
 
           ports:
